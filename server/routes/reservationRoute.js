@@ -1,14 +1,15 @@
 var express = require('express');
 var router = express.Router();
 const models = require('../models');
-const User = models.User
+const Reservation = models.Reservation
+
 
 router.get("/", async (req, res) => {
     try {
-        const users = await User.findAll();
+        const reservations = await Reservation.findAll();
         return res.status(200).json({
             ok: true,
-            data: users
+            data: reservations
         })
     } catch (error) {
         console.error(error);
@@ -19,6 +20,4 @@ router.get("/", async (req, res) => {
     }
 })
 
-
 module.exports = router
-

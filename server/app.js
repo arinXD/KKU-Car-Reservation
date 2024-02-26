@@ -10,7 +10,7 @@ const {
 require("dotenv").config();
 const app = express()
 
-const reservation = require('./routes/reservation');
+const reservationRoute = require('./routes/reservationRoute');
 const userRouter = require('./routes/userRouter');
 const vehicleRouter = require('./routes/vehicleRouter');
 const vehicleTypeRouter = require('./routes/vehicleTypeRouter');
@@ -60,6 +60,9 @@ app.get('/api', (req, res, next) => {
 })
 
 app.use('/api/users', userRouter);
+app.use('/api/reservations', reservationRoute);
+app.use('/api/vehicles', vehicleRouter);
+app.use('/api/types', vehicleTypeRouter);
 
 app.use((req, res, next) => {
     return res.status(400).json({

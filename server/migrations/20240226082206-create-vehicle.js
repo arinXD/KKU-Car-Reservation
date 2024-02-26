@@ -36,6 +36,7 @@ module.exports = {
                 type: Sequelize.STRING
             },
             reserve_status: {
+                defaultValue: false,
                 type: Sequelize.BOOLEAN
             },
             createdAt: {
