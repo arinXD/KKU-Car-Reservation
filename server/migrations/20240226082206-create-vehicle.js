@@ -12,7 +12,7 @@ module.exports = {
             vehicle_type_id: {
                 allowNull: true,
                 defaultValue: null,
-                unique: true,
+                unique: false,
                 type: Sequelize.INTEGER,
                 references: {
                     model: 'VehicleTypes',
@@ -20,6 +20,8 @@ module.exports = {
                 },
                 onDelete: 'SET NULL',
             },
+            img: Sequelize.STRING,
+            model: Sequelize.STRING,
             vehicle_name: {
                 type: Sequelize.STRING
             },

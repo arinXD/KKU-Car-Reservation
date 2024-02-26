@@ -10,6 +10,7 @@ const {
 require("dotenv").config();
 const app = express()
 
+const authRouter = require('./routes/authRouter');
 const reservationRoute = require('./routes/reservationRoute');
 const userRouter = require('./routes/userRouter');
 const vehicleRouter = require('./routes/vehicleRouter');
@@ -59,6 +60,7 @@ app.get('/api', (req, res, next) => {
     })
 })
 
+app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
 app.use('/api/reservations', reservationRoute);
 app.use('/api/vehicles', vehicleRouter);

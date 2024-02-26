@@ -12,8 +12,8 @@ module.exports = {
             user_id: {
                 allowNull: true,
                 defaultValue: null,
-                unique: true,
                 type: Sequelize.INTEGER,
+                unique: false,
                 references: {
                     model: 'Users',
                     key: 'id',
@@ -23,8 +23,8 @@ module.exports = {
             vehicle_id: {
                 allowNull: true,
                 defaultValue: null,
-                unique: true,
                 type: Sequelize.INTEGER,
+                unique: false,
                 references: {
                     model: 'Vehicles',
                     key: 'id',
@@ -43,6 +43,9 @@ module.exports = {
             address: {
                 type: Sequelize.STRING
             },
+            pick_up_point: {
+                type: Sequelize.STRING
+            },
             departure_date: {
                 type: Sequelize.DATE
             },
@@ -51,6 +54,10 @@ module.exports = {
             },
             passengers_number: {
                 type: Sequelize.INTEGER
+            },
+            allow: {
+                defaultValue: false,
+                type: Sequelize.BOOLEAN
             },
             createdAt: {
                 allowNull: false,

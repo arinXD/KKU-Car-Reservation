@@ -18,12 +18,15 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     Reservation.init({
+        vehicle_id: DataTypes.INTEGER,
         sub_district: DataTypes.STRING,
         district: DataTypes.STRING,
         province: DataTypes.STRING,
         address: DataTypes.STRING,
+        pick_up_point: DataTypes.STRING,
         departure_date: DataTypes.DATE,
         return_date: DataTypes.DATE,
+        allow: DataTypes.BOOLEAN,
         passengers_number: DataTypes.INTEGER,
     }, {
         sequelize,

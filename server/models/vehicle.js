@@ -19,6 +19,8 @@ module.exports = (sequelize, DataTypes) => {
     Vehicle.init({
         vehicle_name: DataTypes.STRING,
         brand: DataTypes.STRING,
+        img: DataTypes.STRING,
+        model: DataTypes.STRING,
         seat: DataTypes.INTEGER,
         driver: DataTypes.STRING,
         license_code: DataTypes.STRING,
