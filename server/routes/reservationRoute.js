@@ -6,7 +6,18 @@ const Reservation = models.Reservation
 
 router.get("/", async (req, res) => {
     try {
-        const reservations = await Reservation.findAll();
+        const reservations = await Reservation.findAll({
+            include: [{
+                    model: models.User,
+                },
+                {
+                    model: models.Vehicle,
+                    include: [{
+                        model: models.VehicleType
+                    }, ]
+                },
+            ],
+        });
         return res.status(200).json({
             ok: true,
             data: reservations
