@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { Card, CardFooter, Image, Button, Skeleton } from "@nextui-org/react";
 import axios from 'axios';
 import { useSession } from "next-auth/react"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Page = () => {
     const [types, setTypes] = useState([])
@@ -115,36 +117,101 @@ const Page = () => {
 
         return true;
     }
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault()
         if (!validateFormData(vehicleId, subDistrict, district, province, address, pickUpPoint, departureDate, returnDate, passengersNumber)) {
-            return; 
+            return;
+        }
+        const formData = {
+            vehicle_id: vehicleId,
+            sub_district: subDistrict,
+            district: district,
+            province: province,
+            address: address,
+            pick_up_point: pickUpPoint,
+            departure_date: departureDate,
+            return_date: returnDate,
+            passengers_number: passengersNumber,
+            user_id: session?.user?.id,
         }
 
-        console.log("Form submitted!");
+        try {
+            await axios.post("http://localhost:8000/api/reservations", { data: formData })
+            toast.success('บันทึกข้อมูลการจองของคุณเรียบร้อย', {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "light",
+            });
+        } catch (err) {
+            console.error(err);
+            toast.error('ไม่สามารถบันทึกการจอง', {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "light",
+            });
+        } finally {
+            setVehicleId("")
+            setSubDistrict("")
+            setDistrict("")
+            setProvince("")
+            setAddress("")
+            setpickUpPoint("")
+            setDepartureDate("")
+            setReturnDate("")
+            setPassengersNumber("")
+            document.querySelectorAll(".selection").forEach(e => {
+                e.value = ""
+            })
+        }
     }
     return (
         <>
+            <ToastContainer />
             <form onSubmit={handleSubmit}>
                 <div className='flex gap-2'>
                     <div className='w-1/2 border-1 p-3 rounded-md'>
-                        <h1 className='mb-3'>เลือกรถที่ต้องการจอง</h1>
                         {
                             fetching ?
-                                <ul className='grid grid-cols-4 gap-4'>
-                                    <div className='flex flex-col gap-2'>
-                                        <Skeleton className="h-[100px] w-full rounded-lg" />
-                                        <Skeleton className="h-5 w-full rounded-lg" />
-                                    </div>
-                                    <div className='flex flex-col gap-2'>
-                                        <Skeleton className="h-[100px] w-full rounded-lg" />
-                                        <Skeleton className="h-5 w-full rounded-lg" />
-                                    </div>
-                                    <div className='flex flex-col gap-2'>
-                                        <Skeleton className="h-[100px] w-full rounded-lg" />
-                                        <Skeleton className="h-5 w-full rounded-lg" />
-                                    </div>
-                                </ul>
+                                <div className='space-y-4'>
+                                    <ul className='grid grid-cols-4 gap-4'>
+                                        <div className='flex flex-col items-center justify-center gap-2'>
+                                            <Skeleton className="h-[100px] w-full rounded-lg" />
+                                            <Skeleton className="h-5 w-5 rounded-full" />
+                                        </div>
+                                        <div className='flex flex-col items-center justify-center gap-2'>
+                                            <Skeleton className="h-[100px] w-full rounded-lg" />
+                                            <Skeleton className="h-5 w-5 rounded-full" />
+                                        </div>
+                                        <div className='flex flex-col items-center justify-center gap-2'>
+                                            <Skeleton className="h-[100px] w-full rounded-lg" />
+                                            <Skeleton className="h-5 w-5 rounded-full" />
+                                        </div>
+                                        <div className='flex flex-col items-center justify-center gap-2'>
+                                            <Skeleton className="h-[100px] w-full rounded-lg" />
+                                            <Skeleton className="h-5 w-5 rounded-full" />
+                                        </div>
+                                    </ul>
+                                    <ul className='grid grid-cols-4 gap-4'>
+                                        <div className='flex flex-col items-center justify-center gap-2'>
+                                            <Skeleton className="h-[100px] w-full rounded-lg" />
+                                            <Skeleton className="h-5 w-5 rounded-full" />
+                                        </div>
+                                        <div className='flex flex-col items-center justify-center gap-2'>
+                                            <Skeleton className="h-[100px] w-full rounded-lg" />
+                                            <Skeleton className="h-5 w-5 rounded-full" />
+                                        </div>
+                                    </ul>
+                                </div>
                                 :
                                 !types.length ?
                                     <div>ไม่มีรายการรถ</div>
@@ -157,6 +224,7 @@ const Page = () => {
                                                     <div>ยังไม่มีรายการรถ</div>
                                                     :
                                                     <>
+                                                        <h1 className='mb-3'>เลือกรถที่ต้องการจอง</h1>
                                                         <h2 className='mb-2'>{type?.type_name}</h2>
                                                         <ul className='w-full overflow-x-auto flex gap-4 pb-4'>
                                                             {type?.Vehicles?.map(vehicle => (
@@ -200,7 +268,7 @@ const Page = () => {
                         <h3 className='mb-3'>กรอกรายละเอียดการจอง</h3>
                         <div className="flex flex-col gap-1">
                             <label className="text-sm">จังหวัด: </label>
-                            <select className='border-1 rounded-lg px-2 py-1' onInput={() => selectProvince(event.target.value)} required>
+                            <select className='selection border-1 rounded-lg px-2 py-1' onInput={() => selectProvince(event.target.value)} required>
                                 <option value="" hidden>เลือกจังหวัด</option>
                                 {
                                     thaiProvinces.length &&
@@ -212,7 +280,7 @@ const Page = () => {
                         </div>
                         <div className="flex flex-col gap-1">
                             <label className="text-sm">อำเภอ: </label>
-                            <select className='border-1 rounded-lg px-2 py-1' onInput={() => selectDistrict(event.target.value)} required>
+                            <select className='selection border-1 rounded-lg px-2 py-1' onInput={() => selectDistrict(event.target.value)} required>
                                 <option value="" hidden>เลือกอำเภอ</option>
                                 {
                                     thaiDistrict?.length &&
@@ -224,7 +292,7 @@ const Page = () => {
                         </div>
                         <div className="flex flex-col gap-1">
                             <label className="text-sm">ตำบล: </label>
-                            <select className='border-1 rounded-lg px-2 py-1' onInput={() => setSubDistrict(event.target.value)} required>
+                            <select className='selection border-1 rounded-lg px-2 py-1' onInput={() => setSubDistrict(event.target.value)} required>
                                 <option value="" hidden>เลือกตำบล</option>
                                 {
                                     thaiSubDistrict?.length &&
@@ -235,12 +303,12 @@ const Page = () => {
                             </select>
                         </div>
                         <div className="flex flex-col gap-1">
-                            <label className="text-sm">จุดหมาย: </label>
-                            <textarea className='border-1 rounded-lg px-2 py-1' value={address} onInput={() => setAddress(event.target.value)}></textarea>
-                        </div>
-                        <div className="flex flex-col gap-1">
                             <label className="text-sm">จุดนัดรับ: </label>
                             <textarea className='border-1 rounded-lg px-2 py-1' value={pickUpPoint} onInput={() => setpickUpPoint(event.target.value)}></textarea>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <label className="text-sm">จุดหมาย: </label>
+                            <textarea className='border-1 rounded-lg px-2 py-1' value={address} onInput={() => setAddress(event.target.value)}></textarea>
                         </div>
 
                         <div className="flex flex-col gap-1">

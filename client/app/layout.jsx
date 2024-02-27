@@ -15,7 +15,8 @@ export default function RootLayout({ children }) {
             <body suppressHydrationWarning={true} className={inter.className}>
                 <Provider>
                     {!url.includes("/auth") && <NavbarComponent />}
-                    <ContentBox>{children}</ContentBox>
+                    {url.includes("/auth") ? <main>{children}</main> : <ContentBox>{children}</ContentBox>}
+
                 </Provider>
             </body>
         </html>

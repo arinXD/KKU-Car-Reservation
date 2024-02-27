@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { GoQuestion } from "react-icons/go";
 import { MdOutlineLogout } from "react-icons/md";
 import { usePathname } from 'next/navigation';
+import { MdHistory } from "react-icons/md";
 
 const NavbarComponent = () => {
     const url = usePathname();
@@ -98,8 +99,8 @@ const NavbarComponent = () => {
                                     >
                                         <DropdownItem key="help_and_feedback" className='mb-1'>
                                             <div className='flex gap-3 items-center'>
-                                                <GoQuestion className='w-5 h-5' />
-                                                <span>ประวัติการจองรถของฉัน</span>
+                                                <MdHistory className='w-5 h-5' />
+                                                <span>ประวัติการจอง</span>
 
                                             </div>
                                         </DropdownItem>

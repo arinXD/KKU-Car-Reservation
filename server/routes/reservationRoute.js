@@ -30,20 +30,16 @@ router.get("/", async (req, res) => {
     }
 })
 router.post("/", async (req, res) => {
-    const reservData = req.body
+    const reservData = req.body.data
+    if (Object.values(reservData).filter(e => e).length = 0) {
+        return res.status(401).json({
+            ok: false,
+            message: "Provide data"
+        })
+    }
+    const insertData = reservData
     try {
-        const reservations = await Reservation.findAll({
-            include: [{
-                    model: models.User,
-                },
-                {
-                    model: models.Vehicle,
-                    include: [{
-                        model: models.VehicleType
-                    }, ]
-                },
-            ],
-        });
+        const reservations = await Reservation.create(insertData);
         return res.status(200).json({
             ok: true,
             data: reservations
