@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react'
-import { Card, CardFooter, Image, Button, Skeleton } from "@nextui-org/react";
+import { Card, CardFooter, Image, Button, Skeleton, Chip } from "@nextui-org/react";
 import axios from 'axios';
 import { useSession } from "next-auth/react"
 import { ToastContainer, toast } from 'react-toastify';
@@ -147,6 +147,9 @@ const Page = () => {
                 progress: undefined,
                 theme: "light",
             });
+            setTimeout(() => {
+                window.location.href = "/"
+            }, 2000);
         } catch (err) {
             console.error(err);
             toast.error('ไม่สามารถบันทึกการจอง', {
@@ -179,7 +182,7 @@ const Page = () => {
             <ToastContainer />
             <form onSubmit={handleSubmit}>
                 <div className='flex gap-2'>
-                    <div className='w-1/2 border-1 p-3 rounded-md'>
+                    <div className='w-1/2 h-fit border-1 p-3 rounded-md'>
                         {
                             fetching ?
                                 <div className='space-y-4'>
@@ -228,7 +231,12 @@ const Page = () => {
                                                         <h2 className='mb-2'>{type?.type_name}</h2>
                                                         <ul className='w-full overflow-x-auto flex gap-4 pb-4'>
                                                             {type?.Vehicles?.map(vehicle => (
-                                                                <li key={vehicle.id} className='basis-[38%] shrink-0 flex flex-col gap-3'>
+                                                                <li key={vehicle.id} className='relative basis-[38%] shrink-0 flex flex-col gap-3'>
+                                                                    {vehicle?.reserve_status &&
+                                                                        <Chip className="absolute z-50 top-1 right-1" color="danger">
+                                                                            จองแล้ว
+                                                                        </Chip>
+                                                                    }
                                                                     <Card
                                                                         shadow='none'
                                                                         isFooterBlurred
@@ -237,21 +245,21 @@ const Page = () => {
                                                                     >
                                                                         <img
                                                                             alt="Woman listing to music"
-                                                                            className="object-cover h-[100px] w-full"
+                                                                            className={`${vehicle?.reserve_status ? "opacity-60" : ""} object-cover h-[100px] w-full`}
                                                                             src="/images/van.jpg"
                                                                         />
                                                                         <CardFooter className="text-small justify-start flex-col gap-2">
                                                                             <div className='w-full space-y-1'>
                                                                                 <p className="text-tiny text-black/80">{vehicle.vehicle_name} {vehicle.seat} ที่นั่ง</p>
-                                                                                <p className="text-tiny text-black/80">{vehicle.brand}</p>
-                                                                                <p className="text-tiny text-black/80">{vehicle?.model}</p>
+                                                                                <p className="text-tiny text-black/80">{vehicle.brand} {vehicle?.model}</p>
+                                                                                <p className="text-tiny text-black/80">พนักงานขับรถ: {vehicle.driver}</p>
                                                                             </div>
-                                                                            <Button onClick={() => checkedVehicle(vehicle.id)} className="w-full text-tiny text-white bg-blue-500" variant="flat" color="primary" radius="lg" size="sm">
+                                                                            <Button disabled={vehicle?.reserve_status} onClick={() => checkedVehicle(vehicle.id)} className={`${vehicle?.reserve_status ? "bg-blue-200" : "bg-blue-500"} w-full text-tiny text-white`} variant="flat" color="primary" radius="lg" size="sm">
                                                                                 เลือก
                                                                             </Button>
                                                                         </CardFooter>
                                                                     </Card>
-                                                                    <input type="radio" name="vehicle_id" value={vehicle.id} id={`vehicle_${vehicle.id}`} />
+                                                                    <input disabled={vehicle?.reserve_status} type="radio" name="vehicle_id" value={vehicle.id} id={`vehicle_${vehicle.id}`} />
                                                                 </li>
 
                                                             ))

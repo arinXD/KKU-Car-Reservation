@@ -1,25 +1,68 @@
 "use client"
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { signOut } from "next-auth/react"
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, Skeleton } from "@nextui-org/react";
 import { useSession } from "next-auth/react"
 import Image from 'next/image';
-import { GoQuestion } from "react-icons/go";
 import { MdOutlineLogout } from "react-icons/md";
 import { usePathname } from 'next/navigation';
 import { MdHistory } from "react-icons/md";
+import { IoMdSettings } from "react-icons/io";
 
+const navLinks = [{
+    url: "/",
+    label: "ประวัติการจองรถ"
+},
+{
+    url: "/reservation",
+    label: "จองรถ"
+}]
+const userDdLink = [
+    {
+        url: "/",
+        label: "ประวัติการจองรถ",
+        icon: <MdHistory className='w-5 h-5' />
+
+    },
+]
+const adminNavLinks = [
+    {
+        url: "/admin",
+        label: "จัดการคำขอ"
+    },
+    {
+        url: "/admin/car",
+        label: "จัดการข้อมูลรถ"
+    },
+]
+const adminDDLink = [
+    {
+        url: "/admin",
+        label: "จัดการคำขอ",
+        icon: <IoMdSettings className='w-5 h-5' />
+
+    },
+    {
+        url: "/admin/car",
+        label: "จัดการข้อมูลรถ",
+        icon: <IoMdSettings className='w-5 h-5' />
+    }
+]
 const NavbarComponent = () => {
     const url = usePathname();
     const { data: session, status } = useSession();
-    const links = [{
-        url: "/",
-        label: "ประวัติการจองรถ"
-    },
-    {
-        url: "/reservation",
-        label: "จองรถ"
-    }]
+    const [links, setLinks] = useState([])
+    const [ddLinks, setDDLinks] = useState([])
+
+    useEffect(() => {
+        if (session?.user?.role == "admin") {
+            setLinks(adminNavLinks)
+            setDDLinks(adminDDLink)
+        } else {
+            setLinks(navLinks)
+            setDDLinks(userDdLink)
+        }
+    }, [session])
     return (
         <Navbar shouldHideOnScroll isBordered>
             <NavbarBrand>
@@ -97,15 +140,20 @@ const NavbarComponent = () => {
                                         aria-label="Help & Feedback"
                                         className="mb-0"
                                     >
-                                        <DropdownItem key="help_and_feedback" className='mb-1'>
-                                            <div className='flex gap-3 items-center'>
-                                                <MdHistory className='w-5 h-5' />
-                                                <span>ประวัติการจอง</span>
-
-                                            </div>
-                                        </DropdownItem>
+                                        {
+                                            ddLinks?.map((link, index) => (
+                                                <DropdownItem key={index} className='mb-1'>
+                                                    <Link className='text-gray-600' href={link.url}>
+                                                        <div className='flex gap-3 items-center'>
+                                                            {link.icon}
+                                                            <span>{link.label}</span>
+                                                        </div>
+                                                    </Link>
+                                                </DropdownItem>
+                                            ))
+                                        }
                                         <DropdownItem key="logout" onClick={() => signOut()}>
-                                            <div className='flex gap-3 items-center'>
+                                            <div className='text-gray-600 flex gap-3 items-center'>
                                                 <MdOutlineLogout className='w-5 h-5' />
                                                 <span>Log Out</span>
                                             </div>
@@ -122,12 +170,6 @@ const NavbarComponent = () => {
                         </div>
 
                     }
-                    {/* {
-                        status == "unauthenticated" &&
-                        <Button as={Link} color="primary" href="#" variant="flat">
-                            Sign in
-                        </Button>
-                    } */}
                 </NavbarItem>
             </NavbarContent>
         </Navbar>

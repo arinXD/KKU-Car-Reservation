@@ -18,5 +18,24 @@ router.get("/", async (req, res) => {
         })
     }
 })
+router.get("/types", async (req, res) => {
+    try {
+        const vehicles = await Vehicle.findAll({
+            include: [{
+                model: models.VehicleType,
+            }, ]
+        });
+        return res.status(200).json({
+            ok: true,
+            data: vehicles
+        })
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            ok: false,
+            message: "Server error"
+        })
+    }
+})
 
 module.exports = router

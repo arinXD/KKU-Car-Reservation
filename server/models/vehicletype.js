@@ -17,6 +17,8 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'VehicleType',
+        paranoid: true,
+        deletedAt: 'daletedAt',
     });
     return VehicleType;
 };

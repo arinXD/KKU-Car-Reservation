@@ -56,7 +56,8 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             allow: {
-                defaultValue: false,
+                allowNull: true,
+                defaultValue: null,
                 type: Sequelize.BOOLEAN
             },
             createdAt: {

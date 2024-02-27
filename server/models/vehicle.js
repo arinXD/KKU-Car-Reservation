@@ -28,6 +28,8 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'Vehicle',
+        paranoid: true,
+        deletedAt: 'daletedAt',
     });
     return Vehicle;
 };
