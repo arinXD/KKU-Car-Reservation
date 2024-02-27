@@ -29,11 +29,6 @@ const handler = NextAuth({
             account
         }) {
             if (account.provider === "google") {
-                const accessDomain = ["@kku.ac.th", "@kkumail.com"];
-
-                if (!accessDomain.some(domain => user?.email.endsWith(domain))) {
-                    throw new Error("Please login by kkumail.");
-                }
                 const signUserData = jwt.sign({
                     email: user.email,
                     firstName: user.firstName,
