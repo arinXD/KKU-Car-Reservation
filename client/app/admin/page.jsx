@@ -48,18 +48,21 @@ const Page = () => {
                 <Tab key="success" title="คำขอที่ยืนยัน">
                     <ReservationTable
                         action={false}
+                        carStatus={false}
                         getReservation={getReservation}
                         data={successReservation} />
                 </Tab>
                 <Tab key="cancel" title="คำขอที่ยกเลิก">
                     <ReservationTable
                         action={false}
+                        carStatus={false}
                         getReservation={getReservation}
                         data={cancelReservation} />
                 </Tab>
                 <Tab key="all-reservation" title="คำขอทั้งหมด">
                     <ReservationTable
                         action={false}
+                        carStatus={false}
                         getReservation={getReservation}
                         data={reservations} />
                 </Tab>

@@ -220,6 +220,7 @@ const Page = () => {
                                     <div>ไม่มีรายการรถ</div>
                                     :
                                     <>
+                                        <h1 className='mb-3'>เลือกรถที่ต้องการจอง</h1>
                                         {types.map(type => (
                                             <div key={type.id}>
                                                 {/* <h2 className='mb-2'>{type.type_name}</h2> */}
@@ -227,7 +228,6 @@ const Page = () => {
                                                     <div>ยังไม่มีรายการรถ</div>
                                                     :
                                                     <>
-                                                        <h1 className='mb-3'>เลือกรถที่ต้องการจอง</h1>
                                                         <h2 className='mb-2'>{type?.type_name}</h2>
                                                         <ul className='w-full overflow-x-auto flex gap-4 pb-4'>
                                                             {type?.Vehicles?.map(vehicle => (
@@ -243,10 +243,11 @@ const Page = () => {
                                                                         radius="lg"
                                                                         className="border-1"
                                                                     >
-                                                                        <img
-                                                                            alt="Woman listing to music"
-                                                                            className={`${vehicle?.reserve_status ? "opacity-60" : ""} object-cover h-[100px] w-full`}
-                                                                            src="/images/van.jpg"
+                                                                        <Image
+                                                                            alt="vehicle"
+                                                                            className={`${vehicle?.reserve_status ? "opacity-60" : ""} rounded-none`}
+                                                                            height={100}
+                                                                            src={vehicle?.img}
                                                                         />
                                                                         <CardFooter className="text-small justify-start flex-col gap-2">
                                                                             <div className='w-full space-y-1'>

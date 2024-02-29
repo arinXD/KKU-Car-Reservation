@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import VehicleManage from './VehicleManage'
 import VehicleTypeManage from './VehicleTypeManage'
 import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Page = () => {
     const [fetching, setFetching] = useState([])
@@ -26,14 +28,34 @@ const Page = () => {
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         getVehicles()
-    },[])
+    }, [])
+
+    function stateModal(type="success", message) {
+        const options = {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+            theme: "light",
+        };
+
+        if (type === "success") {
+            toast.success(message, options);
+        } else if (type === "error") {
+            toast.error(message, options);
+        }
+    }
 
     return (
         <div className='flex flex-row gap-10'>
-            <VehicleManage vehicles={vehicles} className='w-[70%]' />
-            <VehicleTypeManage types={types} className='w-[30%]' />
+            <VehicleManage stateModal={stateModal} vehicles={vehicles} getVehicles={getVehicles} types={types} className='w-[70%]' />
+            <VehicleTypeManage stateModal={stateModal} types={types} getVehicles={getVehicles} className='w-[30%]' />
+            <ToastContainer />
         </div>
     )
 }

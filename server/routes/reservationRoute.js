@@ -12,6 +12,7 @@ router.get("/", async (req, res) => {
                 },
                 {
                     model: models.Vehicle,
+                    paranoid: false,
                     include: [{
                         model: models.VehicleType
                     }, ]
@@ -63,6 +64,7 @@ router.put("/:id/allow", async (req, res) => {
             where:{ id: rid},
             include: [{
                 model: models.Vehicle,
+                paranoid: false,
             },
             ],
         },)
@@ -113,6 +115,7 @@ router.get("/users/:id", async (req, res) => {
                 },
                 {
                     model: models.Vehicle,
+                    paranoid: false,
                     include: [{
                         model: models.VehicleType
                     }]
