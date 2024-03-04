@@ -63,6 +63,7 @@ const Page = () => {
                     <ReservationTable
                         action={false}
                         carStatus={false}
+                        status={true}
                         getReservation={getReservation}
                         data={reservations} />
                 </Tab>

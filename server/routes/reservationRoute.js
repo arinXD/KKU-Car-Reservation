@@ -18,7 +18,9 @@ router.get("/", async (req, res) => {
                     }, ]
                 },
             ],
-            order: [['id', 'DESC'],]
+            order: [
+                ['id', 'DESC'],
+            ]
         });
         return res.status(200).json({
             ok: true,
@@ -58,22 +60,29 @@ router.post("/", async (req, res) => {
 
 router.put("/:id/allow", async (req, res) => {
     const rid = req.params.id
-    const { allow } = req.body
-    try{
-        const reservation = await Reservation.findOne({ 
-            where:{ id: rid},
+    const {
+        allow
+    } = req.body
+    try {
+        const reservation = await Reservation.findOne({
+            where: {
+                id: rid
+            },
             include: [{
                 model: models.Vehicle,
                 paranoid: false,
-            },
-            ],
-        },)
+            }, ],
+        }, )
         const cid = reservation.dataValues.Vehicle.id
-        const vehicle = await Vehicle.findOne({ where:{ id: cid} })
-        
+        const vehicle = await Vehicle.findOne({
+            where: {
+                id: cid
+            }
+        })
+
         let message
-        if(allow){
-            if(vehicle.dataValues?.reserve_status){
+        if (allow) {
+            if (vehicle.dataValues?.reserve_status) {
                 return res.status(200).json({
                     ok: false,
                     message: "สถานะรถไม่ว่าง"
@@ -85,7 +94,7 @@ router.put("/:id/allow", async (req, res) => {
             reservation.allow = allow
             await reservation.save()
             message = "ยืนยันการจองเรียบร้อย"
-        }else{
+        } else {
             message = "ปฎิเสธการจอง"
             reservation.allow = allow
             await reservation.save()
@@ -94,7 +103,7 @@ router.put("/:id/allow", async (req, res) => {
             ok: true,
             message
         })
-    }catch(err){
+    } catch (err) {
         console.error(err);
         return res.status(500).json({
             ok: false,
@@ -121,11 +130,35 @@ router.get("/users/:id", async (req, res) => {
                     }]
                 },
             ],
-            order: [['id', 'DESC'],]
+            order: [
+                ['id', 'DESC'],
+            ]
         });
         return res.status(200).json({
             ok: true,
             data: reservations
+        })
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            ok: false,
+            message: "Server error"
+        })
+    }
+})
+
+router.delete("/:id", async (req, res) => {
+    const id = req.params.id
+    try {
+        await Reservation.destroy({
+            where: {
+                id
+            },
+            force: true
+        });
+        return res.status(200).json({
+            ok: true,
+            message: "Delete succes."
         })
     } catch (error) {
         console.error(error);

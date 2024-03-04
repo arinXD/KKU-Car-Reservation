@@ -6,7 +6,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 
-const ReservationTable = ({ data, getReservation, action = true, carStatus = true }) => {
+const ReservationTable = ({ data, getReservation, action = true, carStatus = true, status = false }) => {
 
     async function allow(id, allow) {
         try {
@@ -38,6 +38,10 @@ const ReservationTable = ({ data, getReservation, action = true, carStatus = tru
                         <th className="p-2 text-start">ทะเบียน</th>
                         <th className="p-2 text-start">รถที่จอง</th>
                         {
+                            status &&
+                            <th className="p-2 text-start">สถานะการจอง</th>
+                        }
+                        {
                             carStatus &&
                             <th className="p-2 text-start">สถานะรถ</th>
                         }
@@ -59,6 +63,10 @@ const ReservationTable = ({ data, getReservation, action = true, carStatus = tru
                                     <td className="p-2 w-1/12">{dmy(item?.return_date)}</td>
                                     <td className="p-2 w-1/12">{item?.Vehicle?.license_code} </td>
                                     <td className="p-2 w-1/12">{item?.Vehicle?.vehicle_name} <br /> {item?.Vehicle?.seat} ที่นั่ง</td>
+                                    {
+                                        status &&
+                                        <th className="p-2 w-1/12 text-start">{item?.allow == null ? "รอรับการยืนยัน": item?.allow == true ? "ยอมรับคำขอ" : "ยกเลิกคำขอ"}</th>
+                                    }
                                     {
                                         carStatus &&
                                         <td className="p-2 w-1/12">{item?.Vehicle?.reserve_status ? "จองแล้ว" : "ว่าง"}</td>

@@ -2,8 +2,11 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { useSession } from "next-auth/react"
-import { Skeleton, Accordion, AccordionItem, Avatar, Tabs, Tab, Card, CardBody, CardHeader, Chip } from "@nextui-org/react";
+import { Skeleton, Accordion, AccordionItem, Avatar, Tabs, Tab, Card, CardBody, CardHeader, Chip, Button } from "@nextui-org/react";
 import { dmy } from '@/util/dateFormat';
+import Swal from 'sweetalert2';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Home() {
     const [selected, setSelected] = useState("success");
@@ -12,31 +15,76 @@ export default function Home() {
     const [successReservation, setSuccessReservation] = useState([])
     const [fetching, setFetching] = useState(true)
     const { data: session, status } = useSession();
-    useEffect(() => {
-        async function getReservation(id) {
-            setFetching(true)
-            try {
-                const res = await axios.get(`http://localhost:8000/api/reservations/users/${id}`)
-                const data = res.data.data
-                const history = data.filter(e => e)
-                const pending = data.filter(e => e.allow == null)
-                const success = data.filter(e => e.allow == true)
-                setReverstionHistories(history)
-                setPendingReservation(pending)
-                setSuccessReservation(success)
-            } catch (error) {
-                setReverstionHistories([])
-                setPendingReservation([])
-            } finally {
-                setFetching(false)
-            }
+
+    async function getReservation(id) {
+        setFetching(true)
+        try {
+            const res = await axios.get(`http://localhost:8000/api/reservations/users/${id}`)
+            const data = res.data.data
+            const history = data.filter(e => e)
+            const pending = data.filter(e => e.allow == null)
+            const success = data.filter(e => e.allow == true)
+            setReverstionHistories(history)
+            setPendingReservation(pending)
+            setSuccessReservation(success)
+        } catch (error) {
+            setReverstionHistories([])
+            setPendingReservation([])
+        } finally {
+            setFetching(false)
         }
+    }
+
+    useEffect(() => {
         getReservation(session?.user?.id)
     }, [session])
+
+    function stateModal(type = "success", message) {
+        const options = {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+            theme: "light",
+        };
+
+        if (type === "success") {
+            toast.success(message, options);
+        } else if (type === "error") {
+            toast.error(message, options);
+        }
+    }
+
+    async function delReserv(id) {
+        Swal.fire({
+            title: "ต้องการลบหรือไม่ ?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3b82f6",
+            cancelButtonColor: "#ef4444",
+            confirmButtonText: "ตกลง",
+            cancelButtonText: "ยกเลิก"
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await axios.delete(`http://localhost:8000/api/reservations/${id}`);
+                    getReservation(session?.user?.id)
+                    stateModal("success", "ลบข้อมูลสำเร็จ")
+                } catch (error) {
+                    console.error('Error:', error);
+                    stateModal("error", "ลบข้อมูลไม่สำเร็จ")
+                }
+            }
+        });
+    }
 
     return (
         <>
             <div className="flex w-full flex-col">
+                <ToastContainer />
                 <Tabs
                     aria-label="Options"
                     selectedKey={selected}
@@ -75,7 +123,7 @@ export default function Home() {
                                                     title={
                                                         <div>
                                                             <div className='font-bold'>ออกเดินทางวันที่ {dmy(rev?.departure_date)}</div>
-                                                            <div className='font-normal'>{`${rev?.address} ตำบล ${rev?.sub_district} อำเภอ ${rev?.district} จังหวัด ${rev?.province}`}</div>
+                                                            <div className='font-normal'>{rev?.address} ต.{rev?.sub_district} อ.{rev?.district} จ.{rev?.province}</div>
                                                         </div>
                                                     }
                                                 >
@@ -131,7 +179,9 @@ export default function Home() {
                                                         />
                                                     }
                                                     subtitle={`จอง ณ วันที่ ${dmy(rev?.createdAt)}`}
-                                                    title={`${rev?.address} ตำบล ${rev?.sub_district} อำเภอ ${rev?.district} จังหวัด ${rev?.province}`}
+                                                    title={
+                                                        <div>{rev?.address} ต.{rev?.sub_district} อ.{rev?.district} จ.{rev?.province}</div>
+                                                    }
                                                 >
                                                     <div className='space-y-4'>
                                                         <div>
@@ -148,6 +198,9 @@ export default function Home() {
                                                             <div>คนขับรถ: {rev?.Vehicle?.driver}</div>
                                                         </div>
 
+                                                    </div>
+                                                    <div className='flex justify-end items-center'>
+                                                        <Button color='danger' onClick={() => delReserv(rev.id)}>ลบการจอง</Button>
                                                     </div>
                                                 </AccordionItem>
                                             ))
@@ -188,7 +241,7 @@ export default function Home() {
                                                     title={
                                                         <div>
                                                             <div className='font-bold'>
-                                                                <Chip className={`${rev.allow == null ? "bg-orange-300":""}`} color={rev.allow == true ? "success" : rev.allow == false ? "danger" : "default"} variant="solid">
+                                                                <Chip className={`${rev.allow == null ? "bg-orange-300" : ""}`} color={rev.allow == true ? "success" : rev.allow == false ? "danger" : "default"} variant="solid">
                                                                     {rev.allow == true ? "จองสำเร็จ" : rev.allow == false ? "จองไม่สำเร็จ" : "รอรับการยืนยัน"}
                                                                 </Chip>
                                                             </div>
